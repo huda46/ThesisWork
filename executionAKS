@@ -1,0 +1,56 @@
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+10005 is prime: False
+
+[Done] exited with code=0 in 0.433 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+10019 is prime: False
+
+[Done] exited with code=0 in 0.271 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+10005 is prime: False
+
+[Done] exited with code=0 in 0.289 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+1000018 is prime: False
+
+[Done] exited with code=0 in 0.406 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+100002345 is prime: False
+
+[Done] exited with code=0 in 0.277 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+10000002345 is prime: False
+
+[Done] exited with code=0 in 0.332 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+100000017 is prime: False
+
+[Done] exited with code=0 in 0.286 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+1000000101 is prime: False
+
+[Done] exited with code=0 in 0.332 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+1000000101532 is prime: False
+
+[Done] exited with code=0 in 0.775 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+1000000100001532 is prime: False
+
+[Done] exited with code=0 in 17.175 seconds
+
+[Running] python -u "/home/huda/Desktop/ThesisWork/test.py"
+1000000100000010101 is prime: False
+
+[Done] exited with code=0 in 534.406 seconds
+
+

@@ -1,0 +1,40 @@
+import subprocess
+import re
+
+def extract_public_key():
+    """Extract DH public key (y_A) from OpenSSL output and convert to an integer."""
+    
+    # Run OpenSSL command to get the public key
+    openssl_cmd = "openssl pkey -pubin -in NOBUS_DH_attack/public_key.pem -text -noout"
+    result = subprocess.run(openssl_cmd, shell=True, capture_output=True, text=True)
+    
+    # Check for OpenSSL errors
+    if result.returncode != 0:
+        print("❌ Error: OpenSSL failed to extract public key. Check if `public_key.pem` exists.")
+        exit(1)
+    
+    output = result.stdout.strip()
+    
+    # Extract hexadecimal public key using regex
+    hex_matches = re.findall(r'([0-9A-Fa-f:]+)', output)
+
+    # Ensure a valid match was found
+    if len(hex_matches) < 2:
+        print("❌ Error: Could not extract a valid public key from OpenSSL output.")
+        exit(1)
+    
+    # Flatten the list and remove colons
+    hex_y_A = "".join(hex_matches[1:]).replace(":", "").strip()
+    
+    # Ensure we actually extracted data
+    if not hex_y_A:
+        print("❌ Error: Extracted public key is empty.")
+        exit(1)
+    
+    # Convert to an integer
+    y_A = int(hex_y_A, 16)
+    return y_A
+
+# Call function and print the extracted public key
+y_A = extract_public_key()
+print(f"✅ Extracted y_A: {y_A}")
