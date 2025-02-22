@@ -219,11 +219,11 @@ def compare_algorithms(n, k, a, b, m, q):
     print("Calculations may take some time. Please wait...\n")
 
     # Timing Trial Division
-    # print("Running Trial Division...")
-    # trial_result, trial_time, trial_mem = measure_memory_time(Trial_division, n)
-    # print(f"Trial Division: {'Prime' if trial_result else 'Composite'}")
-    # print(f"Time taken: {trial_time:.9f} seconds | Memory used: {trial_mem:.6f} MB\n")    
-    # print("Trial Division completed.\n")
+    print("Running Trial Division...")
+    trial_result, trial_time, trial_mem = measure_memory_time(Trial_division, n)
+    print(f"Trial Division: {'Prime' if trial_result else 'Composite'}")
+    print(f"Time taken: {trial_time:.9f} seconds | Memory used: {trial_mem:.6f} MB\n")    
+    print("Trial Division completed.\n")
 
     # Timing Fermat Primality Test
     print("Running Fermat Primality Test...")
