@@ -65,11 +65,12 @@ def pohlig_hellman(y, g, p):
             x_values.append(x_q)
             moduli.append(q_exp)
         except ValueError:
-            print(f"⚠️ Warning: Discrete log does not exist for factor {q_exp}")
+            print(f"⚠️ Warning: Pohlig-Hellman failed for factor {q_exp}, skipping...")
             continue
 
     if not x_values:
-        raise ValueError("Failed to compute discrete log for any factor!")
+        print("❌ Pohlig-Hellman failed completely for this modulus!")
+        return None
 
     return crt(moduli, x_values)[0]
 
@@ -77,7 +78,12 @@ def pohlig_hellman(y, g, p):
 try:
     x_p = pohlig_hellman(y_A % p, g, p)
     x_q = pohlig_hellman(y_A % q, g, q)
-    x_recovered, _ = crt([p-1, q-1], [x_p, x_q])
-    print(f"✅ Recovered Alice's Private Key: {x_recovered}")
+
+    if x_p is None or x_q is None:
+        print("❌ Pohlig-Hellman failed for one of the primes! Check smoothness of p-1 and q-1.")
+    else:
+        x_recovered, _ = crt([p-1, q-1], [x_p, x_q])
+        print(f"✅ Recovered Alice's Private Key: {x_recovered}")
+
 except Exception as e:
     print(f"❌ Error in private key recovery: {e}")
