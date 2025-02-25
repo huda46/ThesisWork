@@ -1,53 +1,70 @@
 import random
-from sympy import isprime, gcd, mod_inverse
+from sympy import nextprime
+from fractions import Fraction
+from sympy import continued_fraction, continued_fraction_convergents
+from math import isqrt, sqrt
 
-
-#Generate small RSA key with waek primality test
-def weak_key_gen():
-    while True:
-        p = random.randint(1000, 5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
-        q = random.randint(1000, 5000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
-        if isprime(p) and isprime(q):
-            break
+def generate_rsa_params(bits=512):
+    """
+    Generate RSA keys with a private exponent d satisfying d < N^(1/6) / sqrt(10).
+    """
+    p = nextprime(random.getrandbits(bits))
+    q = nextprime(random.getrandbits(bits))
 
     N = p * q
-    phi = (p-1) * (q-1)
-    e = 65537
-    d = mod_inverse(e, phi)
+    phi_N = (p - 1) * (q - 1)
 
-    return (e, N), (d, N), (p, q)
+    # Ensure d < (N^(1/6)) / sqrt(10)
+    d_limit = int((N ** (1/6)) / sqrt(10))
 
+    while True:
+        d = random.randint(1, d_limit)  # Choose a small d
+        if d < d_limit and (phi_N % d) != 0:
+            break
 
-#RSA Encryption
-def encrypt_rsa(message, pub_key):
-    e, N = pub_key
-    return pow(message, e, N)
+    # Compute e such that e*d ≡ 1 (mod phi(N))
+    e = pow(d, -1, phi_N)
 
-#RSA Decryption
-def decrypt_rsa(message, priv_key):
-    d, N = priv_key
-    return pow(message, d, N)
+    print(f"Generated RSA parameters:\nN = {N}\ne = {e}\nd = {d}\nd_limit = {d_limit}")
+    return N, e, d
 
-# Attacker´s approach: Factorize N to find private key
-def rsa_factor_attack(N):
-    for i in range(2, int(N**0.5) + 1):
-        if N % i == 0:
-            return i, N // i 
-    return None, None
+def wiener_attack(N, e):
+    """
+    Wiener's attack on RSA using continued fraction expansion.
+    """
+    cf_expansion = continued_fraction(Fraction(e, N))
+    convergents = continued_fraction_convergents(cf_expansion)
 
-# attack simulation
-pub_key, priv_key, (p, q) = weak_key_gen()
-N = pub_key[1]
+    for conv in convergents:
+        k, d = conv.numerator, conv.denominator
+        
+        if k == 0:
+            continue
 
-#Attacker attempts to factorize N
-factored_p, factored_q = rsa_factor_attack(N)
+        # Check if d is a possible private exponent
+        phi_N = (e * d - 1) // k
+        if (e * d - 1) % k == 0:
+            # Solve for phi(N)
+            b = N - phi_N + 1
+            delta = b**2 - 4*N
 
-print(f"Genera Wear RSA modulus N: {N}")
-print(f"Original Primes: p={p}, q={q}")
-print(f"Attacker Factorized N: p={factored_p}, q={factored_q}")
+            if delta >= 0:
+                sqrt_delta = isqrt(delta)
+                if sqrt_delta * sqrt_delta == delta:
+                    print(f"Private exponent recovered: d = {d}")
+                    return d
 
-# If factorization succeeds, attacker can compute the private key
-if factored_p and factored_q:
-    phi = (factored_p - 1) * (factored_q - 1)
-    d_cracked = mod_inverse(65537, phi)
-    print(f"Cracked Private Key: {d_cracked}")
+    print("Attack failed: d is not sufficiently small.")
+    return None
+
+# Generate RSA keys where d satisfies d < N^(1/6) / sqrt(10)
+N, e, d = generate_rsa_params()
+
+# Test Wiener's attack
+recovered_d = wiener_attack(N, e)
+
+# Verify if attack succeeded
+if recovered_d == d:
+    print("Wiener's attack successfully recovered d!")
+else:
+    print("Wiener's attack failed.")
