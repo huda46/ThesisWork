@@ -6,7 +6,7 @@ from sympy import factorint
 
 def extract_public_key():
     """Extract DH public key (y_A) from OpenSSL and convert to an integer."""
-    openssl_cmd = "openssl pkey -pubin -in NOBUS_DH_attack/public_key.pem -text -noout"
+    openssl_cmd = "openssl pkey -pubin -in public_key.pem -text -noout"
     output = subprocess.run(openssl_cmd, shell=True, capture_output=True, text=True).stdout
     hex_matches = re.findall(r'([0-9A-Fa-f:]+)', output)
     hex_y_A = "".join(hex_matches[1:]).replace(":", "")
@@ -17,7 +17,7 @@ y_A = extract_public_key()
 print(f"✅ Extracted y_A: {y_A}")
 g = 2 
 # Load p and q from the saved file
-with open("NOBUS_DH_attack/dh_values.txt", "r") as f:
+with open("dh_values.txt", "r") as f:
     p = int(f.readline().strip()) 
     q = int(f.readline().strip())
     
@@ -26,8 +26,8 @@ print(f"q: {q} extracted from file")
 print(f"g: {g}")
 
 
-print(f"Factorization of p-1: {factorint(p - 1)}")
-print(f"Factorization of q-1: {factorint(q - 1)}")
+# print(f"Factorization of p-1: {factorint(p - 1)}")
+# print(f"Factorization of q-1: {factorint(q - 1)}")
 
 
 def pohlig_hellman(y, g, p):

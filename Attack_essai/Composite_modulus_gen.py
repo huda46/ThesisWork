@@ -22,24 +22,24 @@ def generate_b_smooth_prime(bits=32, B=100):
 # Generate small backdoored primes p and q
 p = generate_b_smooth_prime(32)
 q = generate_b_smooth_prime(32)
-n = p * q  # Composite modulus
+N = p * q  # Composite modulus
 g = 2  # Generator
 
 
 # Save values for later use
 with open("dh_values.txt", "w") as f:
-    f.write(f"{p}\n{q}\n{n}\n")
+    f.write(f"{p}\n{q}\n{N}\n")
 
-print(f"✅ Saved p, q, n to `dh_values.txt`.")
+print(f"✅ Saved p, q, N to `dh_values.txt`.")
 print(f"Generated p: {p} (Bits: {p.bit_length()})")
 print(f"Generated q: {q} (Bits: {q.bit_length()})")
-print(f"Composite modulus n: {n} (Bits: {n.bit_length()})")
+print(f"Composite modulus n: {N} (Bits: {n.bit_length()})")
 print(f"Factorization of p-1: {factorint(p - 1)}")
 print(f"Factorization of q-1: {factorint(q - 1)}")
 
 # Create ASN.1 Sequence for DH parameters
 dh_params = Sequence()
-dh_params.setComponentByPosition(0, Integer(n))  # Backdoored modulus
+dh_params.setComponentByPosition(0, Integer(N))  # Backdoored modulus
 dh_params.setComponentByPosition(1, Integer(g))  # Generator G
 
 # Encode in DER format

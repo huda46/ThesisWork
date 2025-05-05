@@ -99,8 +99,9 @@ def solovay_strassen_test(n, k):
 def is_perfect_power(n):
     """
     Checks if n is a perfect power (n = a^b for a > 1 and b > 1).
+    linear search over all exponents b from 2 to sqrt(n)
     """
-    for b in range(2, isqrt(n) + 2):
+    for b in range(2, isqrt(n) + 2): # for better speed
         a = round(n ** (1 / b))
         if a ** b == n:
             return True

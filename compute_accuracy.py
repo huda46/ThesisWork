@@ -124,14 +124,14 @@ def compute_accuracy(algorithm, primes, composites, k):
 def main():
     # Paths to CSV files
     primes_file = 'primes.csv'
-    composites_file = 'balanced_composites_with_carmichaels10.csv'
+    composites_file = 'composites_with_carmichaels.csv'
 
     # Read numbers from the CSV files
     primes = read_from_lists(primes_file)
     composites = read_from_lists(composites_file)
 
     # Number of iterations for probabilistic tests
-    k = 1
+    k = 40
 
     # Test Fermat Primality Test
     fermat_accuracy, fermat_precision, fermat_recall, fermat_error_rate, TP, FP, TN, FN, false_positives = compute_accuracy(

@@ -2,30 +2,33 @@ import random
 from sympy import nextprime
 from fractions import Fraction
 from sympy import continued_fraction, continued_fraction_convergents
-from math import isqrt, sqrt
+from math import isqrt, sqrt, gcd
 
-def generate_rsa_params(bits=512):
+def generate_multiprime_rsa_params(bits=128):
     """
-    Generate RSA keys with a private exponent d satisfying d < N^(1/6) / sqrt(10).
+    Generate a multi-prime RSA key where N = p * q * r.
+    Ensures d satisfies d < N^(1/6) / sqrt(10).
     """
     p = nextprime(random.getrandbits(bits))
     q = nextprime(random.getrandbits(bits))
+    #r = nextprime(random.getrandbits(bits))
 
-    N = p * q
-    phi_N = (p - 1) * (q - 1)
+    N = p * q #* r  
+    phi_N = (p - 1) * (q - 1) #* (r - 1)
 
-    # Ensure d < (N^(1/6)) / sqrt(10)
-    d_limit = int((N ** (1/6)) / sqrt(10))
+    # Calculate the limit for Wiener's attack
+    d_limit = int((N ** (1/4)) / sqrt(6))
 
     while True:
-        d = random.randint(1, d_limit)  # Choose a small d
-        if d < d_limit and (phi_N % d) != 0:
+        d = random.randint(max(1000, d_limit // 10), d_limit)  # Ensure d is not trivially small
+        if gcd(d, phi_N) == 1:  
             break
+    
 
-    # Compute e such that e*d ≡ 1 (mod phi(N))
+    # Compute e as modular inverse of d modulo phi(N)
     e = pow(d, -1, phi_N)
 
-    print(f"Generated RSA parameters:\nN = {N}\ne = {e}\nd = {d}\nd_limit = {d_limit}")
+    print(f"Generated Multi-Prime RSA parameters:\nN = {N}\ne = {e}\nd = {d}\nd_limit = {d_limit}")
     return N, e, d
 
 def wiener_attack(N, e):
@@ -57,8 +60,8 @@ def wiener_attack(N, e):
     print("Attack failed: d is not sufficiently small.")
     return None
 
-# Generate RSA keys where d satisfies d < N^(1/6) / sqrt(10)
-N, e, d = generate_rsa_params()
+# Generate Multi-Prime RSA keys (N = p * q * r)
+N, e, d = generate_multiprime_rsa_params()
 
 # Test Wiener's attack
 recovered_d = wiener_attack(N, e)
